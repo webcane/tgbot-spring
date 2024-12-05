@@ -1,2 +1,2 @@
 # tgbot-spring
-tgbot implemented by using spring
+telegram bot implemented on spring boot
