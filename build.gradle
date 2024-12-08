@@ -15,6 +15,18 @@ java {
 //	set('springAiVersion', "1.0.0-M4")
 //}
 
+jar {
+	manifest {
+		attributes(
+				'Main-Class': 'cane.brothers.tgbot.Main'
+		)
+	}
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	from {
+		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+	}
+}
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
@@ -51,16 +63,3 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
-//jar {
-//    archiveFileName.set('tgbot.jar')
-//    manifest {
-//        attributes(
-//                'Main-Class': application.mainClass
-//        )
-//    }
-//    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-//    from {
-//        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-//    }
-//}
