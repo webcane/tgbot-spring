@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  builder:
+    image: gradle:8.11.1-jdk17-jammy
+    container_name: gradle_builder
+    working_dir: /app
+    volumes:
+      - .:/app   # Mount the current directory to `/app` in the container
+      - gradle-cache:/root/.gradle # Reuse Gradle cache for faster builds
+    command: gradle jar
+    networks:
+      - tgbot-network
+
+  app:
+    image: openjdk:17-jdk-slim # Use a lightweight OpenJDK image for running the app
+    container_name: tgbot_app
+    depends_on:
+      builder:
+        condition: service_completed_successfully
+    working_dir: /app
+    volumes:
+      - .:/app   # Mount the current directory to `/app` in the container
+    env_file:
+      - .env
+    ports:
+      - "80:80"
+      - "443:443"
+      - "42567:42567"
+      - "3128:3128"
+    command: java -jar build/libs/tgbot-spring-0.0.1.jar
+    restart: always
+    networks:
+      - tgbot-network
+
+volumes:
+  gradle-cache:
+
+networks:
+  tgbot-network:
