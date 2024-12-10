@@ -56,7 +56,7 @@ public class TgBot implements SpringLongPollingBot, LongPollingSingleThreadUpdat
         try {
             telegramClient.execute(sendMessage);
         } catch (TelegramApiException e) {
-            log.error("Can't send message", e);
+            log.error("Can't send message to telegram", e);
         }
     }
 

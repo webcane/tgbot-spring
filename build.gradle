@@ -1,19 +1,16 @@
 plugins {
 	id 'java'
+	id 'org.springframework.boot' version '3.2.3'
+	id 'io.spring.dependency-management' version '1.1.4'
 }
 
 group = 'cane.brothers'
 version = '0.0.1'
+description = 'Simple AI Application using OpenAPI Service'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+	sourceCompatibility = '17'
 }
-
-//ext {
-//	set('springAiVersion', "1.0.0-M4")
-//}
 
 jar {
 	manifest {
@@ -35,6 +32,24 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven {
+		url 'https://repo.spring.io/milestone'
+		mavenContent {
+			releasesOnly()
+		}
+	}
+	maven {
+		url 'https://repo.spring.io/snapshot'
+		mavenContent {
+			snapshotsOnly()
+		}
+	}
+}
+
+dependencyManagement {
+	imports {
+		mavenBom 'org.springframework.ai:spring-ai-bom:1.0.0-SNAPSHOT'
+	}
 }
 
 dependencies {
@@ -43,18 +58,17 @@ dependencies {
 //	implementation 'org.telegram:telegrambots-abilities:8.0.0'
 	// slf4j implementation
 	implementation 'ch.qos.logback:logback-classic:1.4.12'
-	// open-ai
-	implementation ('io.github.sashirestela:simple-openai:3.10.0') {
-		exclude(module: 'slf4j-simple')
-	}
+	// spring boot
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	// spring ai
+	implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter'
+
 	// Lombok
 	compileOnly 'org.projectlombok:lombok:1.18.30'
 	annotationProcessor 'org.projectlombok:lombok:1.18.30'
 	// test
-	// testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	// testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	testImplementation platform('org.junit:junit-bom:5.9.1')
-	testImplementation 'org.junit.jupiter:junit-jupiter'
 	// Lombok for testing
 	//testCompileOnly 'org.projectlombok:lombok:1.18.30'
 	//testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
