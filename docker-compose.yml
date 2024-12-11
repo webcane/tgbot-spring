@@ -8,7 +8,7 @@ services:
     volumes:
       - .:/app   # Mount the current directory to `/app` in the container
       - gradle-cache:/root/.gradle # Reuse Gradle cache for faster builds
-    command: gradle jar
+    command: gradle bootJar
     networks:
       - tgbot-network
 
@@ -28,7 +28,7 @@ services:
       - "443:443"
       - "42567:42567"
       - "3128:3128"
-    command: java -jar build/libs/tgbot-spring-0.0.1.jar
+    command: java -Dhttp.proxyHost=$TGBOT_PROXY_HOSTNAME -Dhttp.proxyPort=$TGBOT_PROXY_PORT -Dhttps.proxyUser=$TGBOT_PROXY_USERNAME -Dhttps.proxyPassword=$TGBOT_PROXY_PASSWORD -jar build/libs/tgbot-spring-0.0.1.jar
     restart: always
     networks:
       - tgbot-network
