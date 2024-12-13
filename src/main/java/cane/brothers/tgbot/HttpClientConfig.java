@@ -13,7 +13,6 @@ import org.springframework.web.client.RestClient;
 import org.telegram.telegrambots.longpolling.util.TelegramOkHttpClientFactory;
 
 import java.net.InetSocketAddress;
-import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -24,37 +23,24 @@ public class HttpClientConfig {
 
     @Bean
     Supplier<Proxy> proxySupplier(TgBotProperties properties) {
-        return () -> new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(properties.proxy().hostname(), properties.proxy().port()));
+        return () -> new Proxy(Proxy.Type.HTTP, new InetSocketAddress(properties.proxy().hostname(), properties.proxy().port()));
     }
 
     @Bean
     Supplier<okhttp3.Authenticator> authenticatorSupplier(TgBotProperties properties) {
-        java.net.Authenticator.setDefault(proxyAuthenticator(properties));
-        return () -> null;
-    }
-
-    java.net.Authenticator proxyAuthenticator(TgBotProperties properties) {
-        return new java.net.Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                // For our host and port, return our auth credentials
-                if (getRequestingHost().equalsIgnoreCase(properties.proxy().hostname())) {
-                    if (properties.proxy().port() == getRequestingPort()) {
-                        return new PasswordAuthentication(properties.proxy().username(), properties.proxy().password().toCharArray());
-                    }
-                }
-                return null;
-            }
+        return () -> (route, response) -> {
+            String credential = Credentials.basic(properties.proxy().username(), properties.proxy().password());
+            return response
+                    .request()
+                    .newBuilder()
+                    .header(HttpHeaders.PROXY_AUTHORIZATION, credential)
+                    .build();
         };
     }
 
     @Bean
     public ConnectionPool connectionPool() {
-        return new ConnectionPool(
-                100,
-                75,
-                TimeUnit.SECONDS
-        );
+        return new ConnectionPool(100, 75, TimeUnit.SECONDS);
     }
 
     @Bean
