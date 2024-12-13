@@ -1,6 +1,8 @@
 package cane.brothers.tgbot;
 
+import okhttp3.ConnectionPool;
 import okhttp3.Credentials;
+import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 import org.springframework.boot.autoconfigure.web.client.RestClientBuilderConfigurer;
 import org.springframework.context.annotation.Bean;
@@ -11,23 +13,77 @@ import org.springframework.web.client.RestClient;
 import org.telegram.telegrambots.longpolling.util.TelegramOkHttpClientFactory;
 
 import java.net.InetSocketAddress;
+import java.net.PasswordAuthentication;
 import java.net.Proxy;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 @Configuration
 public class HttpClientConfig {
 
-//    @Bean
-//    HttpClient httpClient(TgBotProperties properties) {
-//        return HttpClient.newBuilder()
-//                .proxy(ProxySelector.of(new InetSocketAddress(properties.proxy().hostname(), properties.proxy().port())))
-//                .build();
-//    }
+    @Bean
+    Supplier<Proxy> proxySupplier(TgBotProperties properties) {
+        return () -> new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(properties.proxy().hostname(), properties.proxy().port()));
+    }
 
-//    @Bean
-//    RestClientCustomizer proxyRestClientCustomizer(TgBotProperties properties) {
-//        String credential = Credentials.basic(properties.proxy().username(), properties.proxy().password());
-//        return restClientBuilder -> restClientBuilder.defaultHeader(HttpHeaders.PROXY_AUTHORIZATION, credential);
-//    }
+    @Bean
+    Supplier<okhttp3.Authenticator> authenticatorSupplier(TgBotProperties properties) {
+        java.net.Authenticator.setDefault(proxyAuthenticator(properties));
+        return () -> null;
+    }
+
+    java.net.Authenticator proxyAuthenticator(TgBotProperties properties) {
+        return new java.net.Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                // For our host and port, return our auth credentials
+                if (getRequestingHost().equalsIgnoreCase(properties.proxy().hostname())) {
+                    if (properties.proxy().port() == getRequestingPort()) {
+                        return new PasswordAuthentication(properties.proxy().username(), properties.proxy().password().toCharArray());
+                    }
+                }
+                return null;
+            }
+        };
+    }
+
+    @Bean
+    public ConnectionPool connectionPool() {
+        return new ConnectionPool(
+                100,
+                75,
+                TimeUnit.SECONDS
+        );
+    }
+
+    @Bean
+    public OkHttpClient.Builder okHttpClientBuilder(Supplier<Proxy> proxySupplier,
+                                                    Supplier<okhttp3.Authenticator> authenticatorSupplier,
+                                                    ConnectionPool connectionPool) {
+        Dispatcher dispatcher = new Dispatcher();
+        dispatcher.setMaxRequests(100);
+        dispatcher.setMaxRequestsPerHost(100);
+
+        OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient()
+                .newBuilder()
+                .dispatcher(dispatcher)
+                .connectionPool(connectionPool)
+                .readTimeout(100, TimeUnit.SECONDS)
+                .writeTimeout(70, TimeUnit.SECONDS)
+                .connectTimeout(75, TimeUnit.SECONDS);
+
+        // Proxy
+        Optional.ofNullable(proxySupplier.get()).ifPresent(okHttpClientBuilder::proxy);
+        Optional.ofNullable(authenticatorSupplier.get()).ifPresent(okHttpClientBuilder::proxyAuthenticator);
+
+        return okHttpClientBuilder;
+    }
+
+    @Bean
+    public OkHttpClient okHttpClient(OkHttpClient.Builder okHttpClientBuilder) {
+        return okHttpClientBuilder.build();
+    }
 
     @Bean
     public OkHttpClient okClient(TgBotProperties properties) {
