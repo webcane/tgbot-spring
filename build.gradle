@@ -62,6 +62,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	// spring ai
 	implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter'
+	// escape chars
+	implementation "org.apache.commons:commons-text:1.12.0"
+
 
 	// Lombok
 	compileOnly 'org.projectlombok:lombok:1.18.30'
