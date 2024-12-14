@@ -35,6 +35,7 @@ public class TgBot implements SpringLongPollingBot, LongPollingSingleThreadUpdat
             put("(", "\\(");
             put(")", "\\)");
             put("#", "\\#");
+            put("-", "\\-");
         }
     };
     private static final AggregateTranslator ESCAPE = new AggregateTranslator(

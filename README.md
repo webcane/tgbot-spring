@@ -18,3 +18,12 @@ start - начало или сброс настроек
 markup - использовать разметку кода
 # repeat - повторить команду
 ```
+
+## deploy to vm
+there are following steps:
+1. merge to `master` branch
+2. push to `deploy` remote repo
+3. run docker compose
+```bash
+docker compose up
+```
