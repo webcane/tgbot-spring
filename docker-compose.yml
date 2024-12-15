@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   builder:
     image: gradle:8.11.1-jdk17-jammy
