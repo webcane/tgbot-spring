@@ -1,5 +1,6 @@
 package cane.brothers.tgbot;
 
+import cane.brothers.tgbot.telegram.TgBotSettings;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Bean;
@@ -17,8 +18,13 @@ public class TgBotConfig {
     }
 
     @Bean
-    public TelegramBotsLongPollingApplication telegramBotsApplication(ObjectMapper objectMapper,
+    public TelegramBotsLongPollingApplication telegramBotApplication(ObjectMapper objectMapper,
                                                                       OkHttpClient okClient) {
         return new TelegramBotsLongPollingApplication(() -> objectMapper, () -> okClient);
+    }
+
+    @Bean
+    public TgBotSettings telegramBotSettings() {
+        return new TgBotSettings();
     }
 }

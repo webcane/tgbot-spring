@@ -14,9 +14,10 @@ SPRING_AI_OPENAI_API_KEY=
 
 ## telegram commands
 ```
-start - начало или сброс настроек
-markup - использовать разметку кода
-# repeat - повторить команду
+/start - начало или сброс настроек
+/markup - использовать разметку кода
+/reply - отвечать на запрос сразу
+# /repeat - повторить команду
 ```
 
 ## deploy to vm
@@ -25,5 +26,5 @@ there are following steps:
 2. push to `deploy` remote repo
 3. run docker compose
 ```bash
-docker compose up
+docker compose up --detach
 ```
