@@ -34,18 +34,25 @@ public class TgBot implements SpringLongPollingBot, LongPollingSingleThreadUpdat
 
     private final static Map<CharSequence, CharSequence> ESCAPE_MAP = new HashMap<>() {
         {
-            put(".", "\\.");
-            put("!", "\\!");
+            put("_", "\\_");
+            put("*", "\\*");
+            put("[", "\\[");
+            put("]", "\\]");
             put("(", "\\(");
             put(")", "\\)");
-            put("{", "\\{");
-            put("}", "\\}");
+            put("~", "\\~");
+            put("`", "\\`");
             put(">", "\\>");
             put("<", "\\<");
             put("#", "\\#");
-            put("=", "\\=");
-            put("-", "\\-");
             put("+", "\\+");
+            put("-", "\\-");
+            put("=", "\\=");
+            put("|", "\\|");
+            put("{", "\\{");
+            put("}", "\\}");
+            put(".", "\\.");
+            put("!", "\\!");
         }
     };
     private static final AggregateTranslator ESCAPE = new AggregateTranslator(
