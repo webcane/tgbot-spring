@@ -1,13 +1,13 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Main" type="Application" factoryName="Application" nameIsGenerated="true">
+  <configuration default="false" name="App" type="Application" factoryName="Application">
     <option name="envFilePaths">
       <option value="$PROJECT_DIR$/.env" />
     </option>
-    <option name="MAIN_CLASS_NAME" value="cane.brothers.tgbot.Main" />
+    <option name="MAIN_CLASS_NAME" value="cane.brothers.bot.App" />
     <module name="tgbot-spring.main" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="cane.brothers.tgbot.*" />
+        <option name="PATTERN" value="cane.brothers.bot.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

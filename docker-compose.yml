@@ -22,10 +22,8 @@ services:
     env_file:
       - .env
     ports:
-      - "80:80"
-      - "443:443"
-      - "42567:42567"
-      - "3128:3128"
+      - "$SERVER_PORT:$SERVER_PORT"
+      - "$TGBOT_PROXY_PORT:$TGBOT_PROXY_PORT"
     command: java -Dhttp.proxyHost=$TGBOT_PROXY_HOSTNAME -Dhttp.proxyPort=$TGBOT_PROXY_PORT -Dhttps.proxyUser=$TGBOT_PROXY_USERNAME -Dhttps.proxyPassword=$TGBOT_PROXY_PASSWORD -jar build/libs/tgbot-spring-0.0.1.jar
     restart: always
     networks:

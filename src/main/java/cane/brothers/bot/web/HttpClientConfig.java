@@ -1,5 +1,6 @@
-package cane.brothers.tgbot;
+package cane.brothers.bot.web;
 
+import cane.brothers.bot.AppProperties;
 import okhttp3.ConnectionPool;
 import okhttp3.Credentials;
 import okhttp3.Dispatcher;
@@ -18,18 +19,19 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 @Configuration
-public class HttpClientConfig {
+class HttpClientConfig {
 
     @Bean
-    Supplier<Proxy> proxySupplier(TgBotProperties properties) {
+    Supplier<Proxy> proxySupplier(AppProperties properties) {
         return properties.proxy() == null ?
                 () -> null :
                 () -> new Proxy(Proxy.Type.HTTP,
-                        new InetSocketAddress(properties.proxy().hostname(), properties.proxy().port()));
+                        new InetSocketAddress(properties.proxy().hostname(),
+                                properties.proxy().port() == null ? 0 : properties.proxy().port()));
     }
 
     @Bean
-    Supplier<okhttp3.Authenticator> authenticatorSupplier(TgBotProperties properties) {
+    Supplier<okhttp3.Authenticator> authenticatorSupplier(AppProperties properties) {
         return properties.proxy() == null ?
                 () -> null :
                 () -> (route, response) -> {

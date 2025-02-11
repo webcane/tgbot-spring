@@ -1,15 +1,15 @@
-package cane.brothers.tgbot;
+package cane.brothers.bot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @SpringBootApplication
-@EnableConfigurationProperties(TgBotProperties.class)
-public class Main {
+@EnableConfigurationProperties(AppProperties.class)
+public class App {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Main.class, args);
+		SpringApplication.run(App.class, args);
 	}
 
 }

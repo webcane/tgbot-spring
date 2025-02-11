@@ -15,7 +15,7 @@ java {
 jar {
 	manifest {
 		attributes(
-				'Main-Class': 'cane.brothers.tgbot.Main'
+				'Main-Class': 'cane.brothers.bot.App'
 		)
 	}
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
