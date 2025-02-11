@@ -5,6 +5,7 @@ telegram bot implemented on spring boot
 Required environmental variables:
 ```dotenv
 TGBOT_TOKEN=
+SERVER_PORT=
 SPRING_AI_OPENAI_API_KEY=
 ```
 
