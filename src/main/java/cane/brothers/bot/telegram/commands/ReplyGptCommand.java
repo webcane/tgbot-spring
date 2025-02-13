@@ -31,7 +31,18 @@ class ReplyGptCommand implements ChatCommand<Message>, Utils {
         Integer messageId = data.getMessageId();
         logUserMessage(data);
 
+        // quick reply
+        var reply = SendMessage.builder().chatId(chatId)
+                .replyToMessageId(messageId)
+                .text("already working on it...")
+                .build();
+        var replyMessage = telegramClient.execute(reply);
+
         String answer = getGptAnswer(data.getText());
+
+        // delete quick reply
+        var delCommand = new DeleteMessageCommand(telegramClient);
+        delCommand.execute(replyMessage);
 
         if (answer.length() > TG_ANSWER_LIMIT) {
             sendReplyFragments(chatId, messageId, answer, TG_ANSWER_LIMIT);

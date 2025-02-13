@@ -3,7 +3,6 @@ package cane.brothers.bot.telegram.commands;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
@@ -27,9 +26,8 @@ class ReplyCallbackHideSettingsCommand implements ChatCommand<CallbackQuery> {
         callbackFactory.create("/callback_answer").execute(data);
 
 
-        var reply = DeleteMessage.builder().chatId(chatId)
-                .messageId(data.getMessage().getMessageId())
-                .build();
-        telegramClient.execute(reply);
+//        messageFactory.create("/delete").execute(data.getMessage());
+        var delCommand = new DeleteMessageCommand(telegramClient);
+        delCommand.execute(data.getMessage());
     }
 }
