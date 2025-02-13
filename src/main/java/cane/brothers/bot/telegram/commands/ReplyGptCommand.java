@@ -12,12 +12,15 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Component("/gpt")
 @RequiredArgsConstructor
 class ReplyGptCommand implements ChatCommand<Message>, Utils {
 
+    private final static int TG_ANSWER_LIMIT = 4000 - 20;
     private final ChatClient chatClient;
     private final TelegramClient telegramClient;
     private final ChatSettings botSettings;
@@ -30,11 +33,21 @@ class ReplyGptCommand implements ChatCommand<Message>, Utils {
 
         String answer = getGptAnswer(data.getText());
 
+        if (answer.length() > TG_ANSWER_LIMIT) {
+            sendReplyFragments(chatId, messageId, answer, TG_ANSWER_LIMIT);
+        } else {
+            sendReply(chatId, messageId, answer);
+        }
+    }
+
+    private void sendReply(Long chatId, Integer messageId, String answer) throws TelegramApiException {
         var msgBuilder = SendMessage.builder().chatId(chatId);
-        if (botSettings.getUseReply(chatId)) {
+
+        if (messageId != null && botSettings.getUseReply(chatId)) {
             // send reply message
             msgBuilder.replyToMessageId(messageId);
         }
+
         if (botSettings.getUseMarkup(chatId)) {
             msgBuilder.parseMode(ParseMode.MARKDOWNV2)
                     .text(escape(answer));
@@ -44,6 +57,17 @@ class ReplyGptCommand implements ChatCommand<Message>, Utils {
 
         var reply = msgBuilder.build();
         telegramClient.execute(reply);
+    }
+
+    private void sendReplyFragments(Long chatId, Integer messageId, String answer, int maxLenght) throws TelegramApiException {
+        boolean sentReply = false;
+        Pattern p = Pattern.compile("\\G\\s*(.{1," + maxLenght + "})(?=\\s|$)", Pattern.DOTALL);
+        Matcher m = p.matcher(answer);
+        while (m.find()) {
+            String fragment = m.group(1);
+            sendReply(chatId, sentReply ? null : messageId, fragment);
+            sentReply = true;
+        }
     }
 
     String getGptAnswer(String userMessage) {
