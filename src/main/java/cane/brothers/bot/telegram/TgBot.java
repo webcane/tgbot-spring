@@ -83,7 +83,7 @@ class TgBot implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsum
 
         // unknown update
         else {
-            log.warn("Unknown update. id %d".formatted(update.getUpdateId()));
+            log.warn("Unknown update. %s".formatted(update));
         }
     }
 }
