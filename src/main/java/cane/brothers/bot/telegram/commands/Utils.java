@@ -13,16 +13,18 @@ public interface Utils {
     Map<CharSequence, CharSequence> ESCAPE_MAP = new HashMap<>() {
         {
             put("_", "\\_");
-            put("*", "\\*");
+//            put("*", "\\*");
+            put("**", "*");
             put("[", "\\[");
             put("]", "\\]");
             put("(", "\\(");
             put(")", "\\)");
             put("~", "\\~");
-            put("`", "\\`");
+//            put("`", "\\`");
             put(">", "\\>");
             put("<", "\\<");
-            put("#", "\\#");
+//            put("#", "\\#");
+            put("#", "");
             put("+", "\\+");
             put("-", "\\-");
             put("=", "\\=");
